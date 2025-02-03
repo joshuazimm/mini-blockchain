@@ -13,9 +13,5 @@ COPY src/ /src/
 # Create a build directory and compile
 RUN mkdir build && cd build && cmake .. && make
 
-# Ensure output directory exists and copy the binary
-RUN mkdir -p /output
-RUN cp /src/build/my_binary /output/
-
 # Keep container alive for debugging if needed
 CMD ["/bin/sh"]
