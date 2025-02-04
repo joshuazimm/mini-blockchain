@@ -2,7 +2,7 @@
 FROM alpine:latest AS builder
 
 # Install necessary dependencies
-RUN apk add --no-cache g++ make cmake
+RUN apk add --no-cache g++ make cmake openssl-dev
 
 # Set working directory inside the container
 WORKDIR /src

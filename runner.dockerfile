@@ -4,7 +4,10 @@ FROM alpine:latest
 WORKDIR /app
 
 # Get dependencies 
-RUN apk update && apk add --no-cache libstdc++
+RUN apk update && apk add --no-cache \
+    g++ \
+    make \
+    openssl-dev
 
 # Copy the binary from the build context to the container
 COPY ./build/mini_blockchain /bin/mini_blockchain
@@ -13,4 +16,4 @@ COPY ./build/mini_blockchain /bin/mini_blockchain
 RUN chmod +x /bin/mini_blockchain
 
 # Set the command to run the binary when the container starts
-ENTRYPOINT ["echo", "Hello World"]
+ENTRYPOINT ["/bin/mini_blockchain"]
