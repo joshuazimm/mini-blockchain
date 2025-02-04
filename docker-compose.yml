@@ -1,0 +1,28 @@
+services:
+  cpp-builder:
+    build:
+      context: .
+      dockerfile: builder.dockerfile
+    volumes:
+      - ./build:/output
+    command: >
+      sh -c "cp /src/build/mini_blockchain /output/ && echo 'Binary copied'"
+    restart: "no"
+
+  cpp-runner:
+    build:
+      context: .
+      dockerfile: runner.dockerfile
+    depends_on:
+      - cpp-builder
+    networks:
+      - my_network
+    deploy:
+      replicas: 5
+    volumes:
+      - ./build/mini_blockchain:/bin/mini_blockchain
+    command: ["/bin/mini_blockchain"]
+
+networks:
+  my_network:
+    driver: bridge
