@@ -4,4 +4,4 @@ project(MyProject)
 set(CMAKE_CXX_STANDARD 17)
 set(SOURCE_FILES main.cpp)
 
-add_executable(my_binary ${SOURCE_FILES})
+add_executable(mini_blockchain ${SOURCE_FILES})

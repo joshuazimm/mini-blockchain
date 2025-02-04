@@ -12,7 +12,7 @@ docker build -t cpp-builder -f builder.dockerfile .
 
 Write-Host "Compiling the C++ binary..."
 docker run -d --name cpp-builder-running --network my_network cpp-builder
-docker cp cpp-builder-running:/src/build/my_binary "$PWD"
+docker cp cpp-builder-running:/src/build/mini_blockchain "$PWD"
 
 docker stop cpp-builder-running
 docker rm cpp-builder-running

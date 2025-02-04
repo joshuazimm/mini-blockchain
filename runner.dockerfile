@@ -5,10 +5,10 @@ FROM alpine:latest
 RUN apk update && apk add --no-cache libstdc++
 
 # Copy the compiled binary from the host system
-COPY my_binary /output/my_binary
+COPY mini_blockchain mini_blockchain
 
 # Ensure the binary has execution permissions
-RUN chmod +x /output/my_binary
+RUN chmod +x mini_blockchain
 
 # Run the binary
-CMD ["/output/my_binary"]
+CMD ["/mini_blockchain"]
