@@ -10,6 +10,7 @@ services:
     restart: "no"
 
   cpp-runner:
+    tty: true
     build:
       context: .
       dockerfile: runner.dockerfile
@@ -21,10 +22,8 @@ services:
       replicas: 5
       resources:
         limits:
-          cpus: "0.5"  # Allocate 50% of a CPU to each container replica
           memory: 1G    # Allocate 1 GB of memory to each replica
         reservations:
-          cpus: "0.2"  # Reserve 20% of a CPU per replica
           memory: 500M  # Reserve 500 MB of memory per replica
     restart: "no"
 
