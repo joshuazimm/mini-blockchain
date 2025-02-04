@@ -16,6 +16,6 @@ echo "Step 4: Waiting for the containers to stabilize..."
 sleep 3  # Allow some time for logs to generate
 
 echo "Step 5: Capturing logs from runner containers..."
-docker compose logs cpp-runner
+docker compose logs
 
 echo "All processes completed successfully!"

@@ -14,6 +14,6 @@ Write-Host "Step 4: Waiting for the containers to stabilize..."
 Start-Sleep -Seconds 3  # Allow some time for logs to generate
 
 Write-Host "Step 5: Capturing logs from runner containers..."
-docker compose logs cpp-runner
+docker compose logs
 
 Write-Host "All processes completed successfully!"

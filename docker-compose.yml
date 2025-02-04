@@ -19,9 +19,6 @@ services:
       - my_network
     deploy:
       replicas: 5
-    volumes:
-      - ./build/mini_blockchain:/bin/mini_blockchain
-    command: ["/bin/mini_blockchain"]
 
 networks:
   my_network:
