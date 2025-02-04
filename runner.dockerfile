@@ -5,7 +5,7 @@ FROM alpine:latest
 RUN apk update && apk add --no-cache libstdc++
 
 # Copy the compiled binary from the host system
-COPY output/my_binary /output/my_binary
+COPY my_binary /output/my_binary
 
 # Ensure the binary has execution permissions
 RUN chmod +x /output/my_binary
