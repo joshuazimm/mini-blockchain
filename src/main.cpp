@@ -82,8 +82,8 @@ bool meetsTarget(const unsigned char* hash) {
 
 /* ---------- POW MINER LOOP ----------
 This loop uses SHA256 hashing implemented by open ssl. It is
-important that a PoW system that a one-way (irreversible) 
-and deterministic hashing algorithm so that the solution can
+important that a PoW system utilizes a one-way (irreversible) 
+and deterministic hashing algorithm such that the solution can
 be verified and one cannot reverse engineer the input from the
 solution.
 
@@ -135,9 +135,6 @@ void mineBlock() {
             break;
         }
 
-        /*
-        Increment Nonce
-        */
         ++nonce;
     }
 }
@@ -149,10 +146,10 @@ void mineBlock() {
 int main() {
     while (true) {
         /*
-        Utilize a thread based structure for scalability (multi
-        mining loops per node possibly) and also allows the toy 
-        example to sleep and more granularly track the status 
-        of the loop from the program side.
+        Utilize a thread based structure for scalability (miner
+        pools) and also allows the toy example to sleep and 
+        more granularly track the status of the loop from the 
+        program side.
         */
         std::thread miningThread(mineBlock);
         miningThread.join();
