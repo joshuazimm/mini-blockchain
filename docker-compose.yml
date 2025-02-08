@@ -5,8 +5,7 @@ services:
       dockerfile: builder.dockerfile
     volumes:
       - ./build:/output
-    command: >
-      sh -c "cp /src/build/mini_blockchain /output/ && echo 'Binary copied'"
+      - ./src:/src
     restart: "no"
 
   cpp-runner:
@@ -16,15 +15,39 @@ services:
       dockerfile: runner.dockerfile
     depends_on:
       - cpp-builder
+    volumes:
+      - ./build:/build
     networks:
       - my_network
     deploy:
       replicas: 5
       resources:
         limits:
-          memory: 1G    # Allocate 1 GB of memory to each replica
+          memory: 1G # Allocate 1 GB of memory to each replica
         reservations:
-          memory: 500M  # Reserve 500 MB of memory per replica
+          memory: 500M # Reserve 500 MB of memory per replica
+    restart: "no"
+
+  master:
+    tty: true
+    build:
+      context: .
+      dockerfile: runner.dockerfile
+    depends_on:
+      - cpp-builder
+    volumes:
+      - ./build:/build
+    networks:
+      - my_network
+    environment:
+      - NETWORK=master
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: 1G # Allocate 1 GB of memory to each replica
+        reservations:
+          memory: 500M # Reserve 500 MB of memory per replica
     restart: "no"
 
 networks:
