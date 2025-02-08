@@ -1,7 +1,6 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <unistd.h>
-#include <arpa/inet.h>
 #include <netdb.h>
 
 #include "controller.h"
@@ -52,6 +51,8 @@ void ClientController::start_broadcast() {
     sockaddr_in server_address;
     socklen_t server_address_len = sizeof(server_address);
 
+    bool found_server = false;
+
     while (true) {
         if (!running_thread) {
             break;
@@ -70,13 +71,18 @@ void ClientController::start_broadcast() {
             );
 
             std::string message(buffer);
-            if (message == SERVER_DISCOVERY_MESSAGE) {
+            if (!found_server && message == SERVER_DISCOVERY_MESSAGE) {
                 char server_ip[INET_ADDRSTRLEN];
                 inet_ntop(AF_INET, &server_address.sin_addr, server_ip, INET_ADDRSTRLEN);
                 logger->debug("Attempting to connect to validated server: " + std::string(server_ip));
 
-                // TODO: Establish TCP connection with server
-                break;
+                // TODO: Establish TCP or continue listening to server broadcasts
+                master_server_addr = server_address;
+                found_server = true;
+            } else if (master_server_addr.sin_addr.s_addr == server_address.sin_addr.s_addr) {
+                logger->warn("Received unknown message: " + message);
+            } else {
+                logger->warn("Received message from unknown server: " + message);
             }
         }
 

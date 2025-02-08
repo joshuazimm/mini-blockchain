@@ -1,0 +1,1 @@
+After establishing a connection with the master server, the master server can act as a "DNS seed" providing one or two other nodes in the network. In which the other nodes can ask each other and "gossip" the network of nodes.

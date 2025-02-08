@@ -8,6 +8,7 @@ class NetController {
 protected:
   Logger *logger = new Logger("NetController");
   virtual void start_broadcast() = 0;
+  // TODO: establish_connection() method for TCP connection
   std::thread broadcast_thread;
 
   bool running_thread = false;
