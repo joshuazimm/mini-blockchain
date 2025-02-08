@@ -8,6 +8,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # Find OpenSSL
 find_package(OpenSSL REQUIRED)
 
+include_directories(${CMAKE_SOURCE_DIR}/include)
+
 # Folders to look for sources
 SET (SOURCE_FOLDERS
     "logger"
@@ -17,9 +19,9 @@ SET (SOURCE_FOLDERS
 )
 
 # Add all source files
-set(SOURCES main.cpp)  # Initialize SOURCES with main.cpp
+set(SOURCES ${CMAKE_SOURCE_DIR}/src/main.cpp)  # Initialize SOURCES with main.cpp
 foreach(folder ${SOURCE_FOLDERS})
-    file(GLOB FOLDER_SOURCES "${folder}/*.cpp")
+    file(GLOB FOLDER_SOURCES "${CMAKE_SOURCE_DIR}/src/${folder}/*.cpp")
     list(APPEND SOURCES ${FOLDER_SOURCES})
 endforeach()
 

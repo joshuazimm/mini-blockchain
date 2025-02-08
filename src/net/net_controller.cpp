@@ -1,5 +1,4 @@
-#include "net_controller.h"
-
+#include "net/net_controller.h"
 #include <unistd.h>
 
 NetController::~NetController() {
@@ -13,7 +12,12 @@ NetController::~NetController() {
 
 void NetController::start_broadcast_thread() {
     running_thread = true;
-    broadcast_thread = std::thread(&NetController::start_broadcast, this);
+    broadcast_thread = std::thread([this] { 
+        while (true)
+        {
+            start_broadcast(); 
+        }
+    });
 }
 
 void NetController::join_thread() {

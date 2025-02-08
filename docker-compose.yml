@@ -5,7 +5,7 @@ services:
       dockerfile: builder.dockerfile
     volumes:
       - ./build:/output
-      - ./src:/src
+      - ./:/src
     restart: "no"
 
   cpp-runner:

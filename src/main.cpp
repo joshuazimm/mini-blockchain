@@ -6,9 +6,10 @@
 #include <random>
 #include <thread>
 #include <chrono>
+#include <unistd.h>
 
-#include "net/client/controller.h"
-#include "net/master/controller.h"
+#include "net/client_controller.h"
+#include "net/master_controller.h"
 
 /* ---------- DIFFICULTY ----------
 This is a Fixed Target Difficulty Algorithm (or Static 
@@ -154,13 +155,19 @@ int main() {
 
         MasterController master_controller;
         master_controller.start_broadcast_thread();
-        master_controller.join_thread();
+
+        while (true) {
+            // Generate random string for message TODO:TESTING
+            std::string message = "Hello from master!";
+            master_controller.send_message_to_clients(message.c_str(), message.size());
+            sleep(5);
+        }
+
     } else {
         std::cout << "Client node\n";
 
         ClientController client_controller;
         client_controller.start_broadcast_thread();
-        client_controller.join_thread();
 
         while (true) {
             /*

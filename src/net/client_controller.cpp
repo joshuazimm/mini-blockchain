@@ -3,8 +3,9 @@
 #include <unistd.h>
 #include <netdb.h>
 
-#include "controller.h"
-#include "../consts.h"
+#include "net/client_controller.h"
+#include "net/consts.h"
+#include "macros.h"
 
 ClientController::ClientController() {
     // Initialize the logger
@@ -26,32 +27,24 @@ std::string get_local_ip() {
 }
 
 void ClientController::start_broadcast() {
-    int sock = socket(AF_INET, SOCK_DGRAM, 0);
-    if (sock < 0) {
-        logger->error("Failed to create socket");
-        return;
-    }
+    int sock;
+    CREATE_SOCKET(sock, AF_INET, SOCK_DGRAM, 0);
 
     logger->info("Listening on ip: " + get_local_ip());
 
     sockaddr_in client_addr;
-    memset(&client_addr, 0, sizeof(client_addr));
-    client_addr.sin_family = AF_INET;
-    client_addr.sin_port = htons(NET_BROADCAST_PORT);
-    client_addr.sin_addr.s_addr = INADDR_BROADCAST;
+    CREATE_INADDR_BROADCAST(client_addr);
 
     // Bind the socket
-    if (bind(sock, (struct sockaddr*)&client_addr, sizeof(client_addr)) < 0) {
-        logger->error("Failed to bind socket");
-        close(sock);
-        return;
-    }
+    ERROR_THROWING_SOCKET_OPERATION(
+        bind(sock, (struct sockaddr*)&client_addr, sizeof(client_addr)), 
+        sock, 
+        "Failed to bind socket"
+    );
 
     char buffer[1024];
     sockaddr_in server_address;
     socklen_t server_address_len = sizeof(server_address);
-
-    bool found_server = false;
 
     while (true) {
         if (!running_thread) {
@@ -71,19 +64,47 @@ void ClientController::start_broadcast() {
             );
 
             std::string message(buffer);
-            if (!found_server && message == SERVER_DISCOVERY_MESSAGE) {
+            if (message == SERVER_DISCOVERY_MESSAGE) {
                 char server_ip[INET_ADDRSTRLEN];
                 inet_ntop(AF_INET, &server_address.sin_addr, server_ip, INET_ADDRSTRLEN);
                 logger->debug("Attempting to connect to validated server: " + std::string(server_ip));
 
-                // TODO: Establish TCP or continue listening to server broadcasts
-                master_server_addr = server_address;
-                found_server = true;
-            } else if (master_server_addr.sin_addr.s_addr == server_address.sin_addr.s_addr) {
-                logger->warn("Received unknown message: " + message);
-            } else {
-                logger->warn("Received message from unknown server: " + message);
+                break;
             }
+        }
+
+        // Sleep for 5 seconds
+        sleep(5);
+    }
+
+    close(sock);
+
+    // Start TCP connection
+    CREATE_SOCKET(sock, AF_INET, SOCK_STREAM, 0);
+
+    // Set server address port
+    server_address.sin_port = htons(NET_TCP_PORT);
+    
+    // Connect to the server
+    if (connect(sock, (struct sockaddr*)&server_address, sizeof(server_address)) < 0) {
+        logger->error("Failed to connect to server");
+        close(sock);
+        return;
+    }
+
+    // Recieve data from the server
+    while (true) {
+        if (!running_thread) {
+            break;
+        }
+
+        memset(buffer, 0, sizeof(buffer));
+        int bytes_received = recv(sock, buffer, sizeof(buffer), 0);
+        if (bytes_received > 0) {
+            logger->info("Received " + std::to_string(bytes_received) + " bytes from server: " + std::string(buffer));
+        } else {
+            logger->error("Server disconnected");
+            break;
         }
 
         // Sleep for 5 seconds
