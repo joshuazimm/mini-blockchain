@@ -7,6 +7,9 @@
 #include <thread>
 #include <chrono>
 
+#include "net/client/controller.h"
+#include "net/master/controller.h"
+
 /* ---------- DIFFICULTY ----------
 This is a Fixed Target Difficulty Algorithm (or Static 
 Difficulty PoW). The target value is computed as: 
@@ -144,14 +147,30 @@ void mineBlock() {
 
 
 int main() {
-    while (true) {
-        /*
-        Utilize a thread based structure for scalability (miner
-        pools) and also allows the toy example to sleep and 
-        more granularly track the status of the loop from the 
-        program side.
-        */
-        std::thread miningThread(mineBlock);
-        miningThread.join();
+    // Check environment for NETWORK env variable
+    const char* network = std::getenv("NETWORK");
+    if (network && std::string(network) == "master") {
+        std::cout << "Master node\n";
+
+        MasterController master_controller;
+        master_controller.start_broadcast_thread();
+        master_controller.join_thread();
+    } else {
+        std::cout << "Client node\n";
+
+        ClientController client_controller;
+        client_controller.start_broadcast_thread();
+        client_controller.join_thread();
+
+        while (true) {
+            /*
+            Utilize a thread based structure for scalability (miner
+            pools) and also allows the toy example to sleep and 
+            more granularly track the status of the loop from the 
+            program side.
+            */
+            std::thread miningThread(mineBlock);
+            miningThread.join();
+        }
     }
 }
