@@ -7,13 +7,14 @@ WORKDIR /app
 RUN apk update && apk add --no-cache \
     g++ \
     make \
-    openssl-dev
+    openssl-dev \
+    sqlite-dev
 
-# Copy the binary from the build context to the container
-COPY ./build/mini_blockchain /bin/mini_blockchain
+# # Copy the binary from the build context to the container
+# COPY ./build/mini_blockchain /bin/mini_blockchain
 
-# Ensure the binary is executable
-RUN chmod +x /bin/mini_blockchain
+# # Ensure the binary is executable
+# RUN chmod +x /bin/mini_blockchain
 
 # Set the command to run the binary when the container starts
-ENTRYPOINT ["/bin/mini_blockchain"]
+ENTRYPOINT ["/build/mini_blockchain"]

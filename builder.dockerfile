@@ -7,8 +7,9 @@ RUN apk add --no-cache g++ make cmake openssl-dev
 # Set working directory inside the container
 WORKDIR /src
 
-# Copy source files and CMakeLists.txt
-COPY src/ /src/
+# Copy entry script to the container
+COPY ./builder_entrypoint.sh /entrypoint.sh
 
-# Create a build directory and compile
-RUN mkdir build && cd build && cmake .. && make
+RUN chmod +x /entrypoint.sh
+
+ENTRYPOINT [ "/bin/sh", "/entrypoint.sh" ]
